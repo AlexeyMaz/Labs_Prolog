@@ -1,3 +1,4 @@
+man(arseniy).
 man(artem).
 man(egor).
 man(daniil).
@@ -8,8 +9,7 @@ man(artur).
 man(kirill).
 man(ivan).
 man(anton).
-man(andrei).
-man(arseniy).
+man(andrey).
 man(valera).
 
 woman(olga).
@@ -48,8 +48,8 @@ parent(ivan,polina).
 parent(anna,anton).
 parent(anna,polina).
 
-parent(andrei,rita).
-parent(andrei,svetlana).
+parent(andrey,rita).
+parent(andrey,svetlana).
 parent(katya,rita).
 parent(katya,svetlana).
 
@@ -67,3 +67,8 @@ woman :- woman(X),print(X),nl,fail.
 daughter(X, Y) :- woman(X), parent(Y, X).
 % 11 Вывести всех дочерей X
 daughter(X) :- woman(Y), parent(X, Y), write(Y), nl, fail.
+
+% 12 Является ли X мужем Y
+husband(X,Y) :- man(X), woman(Y), parent(X,Child), parent(Y,Child).
+% 12 Выводит мужа X
+husband(X) :- woman(X), man(Y), parent(X,Child), parent(Y,Child), !, print(Y), nl.
