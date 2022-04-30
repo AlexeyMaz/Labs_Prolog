@@ -49,9 +49,11 @@ parent(anna,anton).
 parent(anna,polina).
 
 parent(andrey,rita).
+parent(andrey,ivan).
 parent(andrey,svetlana).
 parent(katya,rita).
 parent(katya,svetlana).
+parent(katya,ivan).
 
 parent(arseniy,nastya).
 parent(arseniy,valera).
@@ -76,4 +78,9 @@ husband(X) :- woman(X), man(Y), parent(X,Child), parent(Y,Child), !, print(Y), n
 % 13 Является ли X внуком Y
 grand_son(X,Y) :- man(X), parent(Y,Z), parent(Z,X).
 % 13 Вывести всех внуков X
-grand_sons(X) :- parent(X,Y), parent(Y,Z), man(Z), write(Z), nl, fail. 
+grand_sons(X) :- parent(X,Y), parent(Y,Z), man(Z), write(Z), nl, fail.
+
+% 14 Являются ли X и Y бабушкой и внучкой или внучкой и бабушкой
+grand_ma_and_da(X,Y) :- 
+    woman(X), woman(Y), parent(X, Z), parent(Z, Y),!;
+    woman(Y), woman(X), parent(Y, Z), parent(Z, X),!.
