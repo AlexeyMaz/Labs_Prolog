@@ -108,4 +108,13 @@ N2 is N div 10, kolvoD_Down(N2, Kol, X).
 % 19 Фибоначчи с помощью рекурсии вверх
 fib_Up(1, 1) :- !.
 fib_Up(2, 1) :- !.
-fib_Up(N, X) :- N1 is N - 1, N2 is N-2, fib_Up(N1, X1), fib_Up(N2, X2), X is X1 + X2 
+fib_Up(N, X) :- N1 is N - 1, N2 is N-2, fib_Up(N1, X1), fib_Up(N2, X2), X is X1 + X2.
+
+% 19 Фибоначчи с помощью рекурсии вниз
+fib_Down(N, X) :- fib_Down(1, 1, 0, N, X).
+fib_Down(N, Res, _ , N, Res) :- !.
+fib_Down(I, X1, X2, N, Res) :- X is X1 + X2, I1 is I + 1, fib_Down(I1, X, X1, N, Res).
+
+fib_down(_, Result, N, N, Result) :- !.
+fib_down(X2, X1, I, N, Result) :-  X is X1 + X2, I1 is I + 1, fib_down(X1, X, I1, N, Result).
+fib_down(N, X) :- fib_down(0, 1, 1, N, X). 
