@@ -86,17 +86,35 @@ grand_ma_and_da(X,Y) :-
     woman(Y), woman(X), parent(Y, Z), parent(Z, X),!.
 
 % 15 Найти минимальную цифру числа с помощью рекурсии вверх
-minDigit_Up(X) :- minDigit_Up(X,9).
 minDigit_Up(0,9) :- !.
 minDigit_Up(X,Digit) :- X1 is X div 10, minDigit_Up(X1,Dig1), Dig2 is X mod 10, (Dig1 < Dig2, Digit is Dig1; Digit is Dig2), !.
 
-min_d_up(0, 9) :- !.
-min_d_up(X, Dig) :- X1 is X div 10, min_d_up(X1, D1), D2 is X mod 10, (D1<D2, Dig is D1; Dig is D2),!.
+% 16 Найти минимальную цифру числа с помощью рекурсии вниз
+minDigit_Down(N, X) :- minDigit_Down(N, 9, X).
+minDigit_Down(0, X, X) :- !.
+minDigit_Down(N, Digit, X) :- N1 is N div 10, Dig is N mod 10, Dig < Digit, !, minDigit_Down(N1, Dig, X); 
+N2 is N div 10, minDigit_Down(N2, Digit, X).
 
-%15
-minU(0,9):-!.
-minU(X,M):-
-	X1 is X div 10,
-	minU(X1,M1),
-	M2 is X mod 10,
-	(M2<M1, M is M2;M is M1).
+% 17 Найти количество цифр числа, меньших 3 с помощью рекурсии вверх
+kolvoD_Up(0, 0) :- !.
+kolvoD_Up(N, Kol) :- N1 is N div 10, kolvoD_Up(N1, Kol1), Digit is N mod 10, (Digit < 3, Kol is Kol1 + 1; Kol is Kol1), !.
+
+% 18 Найти количество цифр числа, меньших 3 с помощью рекурсии вниз
+kolvoD_Down(N, X) :- kolvoD_Down(N, 0, X).
+kolvoD_Down(0, X, X) :- !.
+kolvoD_Down(N, Kol, X) :- N1 is N div 10, Dig is N mod 10, Dig < 3, !, Kol1 is Kol + 1, kolvoD_Down(N1, Kol1, X);
+N2 is N div 10, kolvoD_Down(N2, Kol, X).
+
+% 19 Фибоначчи с помощью рекурсии вверх
+fib_Up(1, 1) :- !.
+fib_Up(2, 1) :- !.
+fib_Up(N, X) :- N1 is N - 1, N2 is N-2, fib_Up(N1, X1), fib_Up(N2, X2), X is X1 + X2.
+
+% 19 Фибоначчи с помощью рекурсии вниз
+fib_Down(N, X) :- fib_Down(1, 1, 0, N, X).
+fib_Down(N, Res, _ , N, Res) :- !.
+fib_Down(I, X1, X2, N, Res) :- X is X1 + X2, I1 is I + 1, fib_Down(I1, X, X1, N, Res).
+
+fib_down(_, Result, N, N, Result) :- !.
+fib_down(X2, X1, I, N, Result) :-  X is X1 + X2, I1 is I + 1, fib_down(X1, X, I1, N, Result).
+fib_down(N, X) :- fib_down(0, 1, 1, N, X). 
