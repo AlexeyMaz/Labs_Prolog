@@ -88,3 +88,9 @@ grand_ma_and_da(X,Y) :-
 % 15 Найти минимальную цифру числа с помощью рекурсии вверх
 minDigit_Up(0,9) :- !.
 minDigit_Up(X,Digit) :- X1 is X div 10, minDigit_Up(X1,Dig1), Dig2 is X mod 10, (Dig1 < Dig2, Digit is Dig1; Digit is Dig2), !.
+
+% 16 Найти минимальную цифру числа с помощью рекурсии вниз
+minDigit_Down(N ,X) :- minDigit_Down(N, 9, X).
+minDigit_Down(0, X, X) :- !.
+minDigit_Down(N, Digit, X) :- N1 is N div 10, Dig is N mod 10, Dig < Digit, !, minDigit_Down(N1, Dig, X); N2 is N div 10, minDigit_Down(N2, Digit, X).
+
