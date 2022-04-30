@@ -71,4 +71,9 @@ daughter(X) :- woman(Y), parent(X, Y), write(Y), nl, fail.
 % 12 Является ли X мужем Y
 husband(X,Y) :- man(X), woman(Y), parent(X,Child), parent(Y,Child).
 % 12 Выводит мужа X
-husband(X) :- woman(X), man(Y), parent(X,Child), parent(Y,Child), !, print(Y), nl.
+husband(X) :- woman(X), man(Y), parent(X,Child), parent(Y,Child), !, print(Y), nl, fail.
+
+% 13 Является ли X внуком Y
+grand_son(X,Y) :- man(X), parent(Y,Z), parent(Z,X).
+% 13 Вывести всех внуков X
+grand_sons(X) :- parent(X,Y), parent(Y,Z), man(Z), write(Z), nl, fail. 
