@@ -104,3 +104,8 @@ kolvoD_Down(N, X) :- kolvoD_Down(N, 0, X).
 kolvoD_Down(0, X, X) :- !.
 kolvoD_Down(N, Kol, X) :- N1 is N div 10, Dig is N mod 10, Dig < 3, !, Kol1 is Kol + 1, kolvoD_Down(N1, Kol1, X);
 N2 is N div 10, kolvoD_Down(N2, Kol, X).
+
+% 19 Фибоначчи с помощью рекурсии вверх
+fib_Up(1, 1) :- !.
+fib_Up(2, 1) :- !.
+fib_Up(N, X) :- N1 is N - 1, N2 is N-2, fib_Up(N1, X1), fib_Up(N2, X2), X is X1 + X2 
