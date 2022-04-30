@@ -86,5 +86,17 @@ grand_ma_and_da(X,Y) :-
     woman(Y), woman(X), parent(Y, Z), parent(Z, X),!.
 
 % 15 Найти минимальную цифру числа с помощью рекурсии вверх
+minDigit_Up(X) :- minDigit_Up(X,9).
 minDigit_Up(0,9) :- !.
 minDigit_Up(X,Digit) :- X1 is X div 10, minDigit_Up(X1,Dig1), Dig2 is X mod 10, (Dig1 < Dig2, Digit is Dig1; Digit is Dig2), !.
+
+min_d_up(0, 9) :- !.
+min_d_up(X, Dig) :- X1 is X div 10, min_d_up(X1, D1), D2 is X mod 10, (D1<D2, Dig is D1; Dig is D2),!.
+
+%15
+minU(0,9):-!.
+minU(X,M):-
+	X1 is X div 10,
+	minU(X1,M1),
+	M2 is X mod 10,
+	(M2<M1, M is M2;M is M1).
