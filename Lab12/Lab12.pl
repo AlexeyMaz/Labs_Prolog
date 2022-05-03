@@ -38,7 +38,7 @@ task12(X, Kol) :- task12(X, X, Kol).
 task12(_, 2, 0) :- !.
 task12(X, I, Kol) :- I1 is I - 1, task12(X, I1, Kol1), ssd(X, Sum), nod(X, I, Res1), nod(Sum, I, Res2), (0 =\= (X mod I), 1 =\= Res1, 1 =:= Res2, Kol is Kol1 + 1; Kol is Kol1), !.
 
-% 13. Найдите сумму всех чисел, которые равны сумме факториалов их цифр. 
+% 13 Найдите сумму всех чисел, которые равны сумме факториалов их цифр. 
 %Примечание: так как 1! = 1 и 2! = 2 не являются суммами, они не включены.
 digitSum(X, Sum) :- digitSum(X, Sum, 0).
 digitSum(0, Sum, Sum) :- !.
@@ -49,3 +49,8 @@ isWowNumber(X) :- digitSum(X, FactSum), X = FactSum.
 task13(Result) :- task13(10000, 0, Result).
 task13(2, Result, Result) :- !.
 task13(CurN, CurSum, Result) :- NewN is CurN - 1, (is_cool_number(CurN), NewSum is CurSum + CurN; NewSum is CurSum), task13(NewN, NewSum, Result), !. 
+
+% 14 Построить предикат, получающий длину списка
+getLengthList([ Head | Tail ], Length) :- len([ Head | Tail ], 0, Length).
+len([], Length, Length).
+len([ _ | Tail ], CurLength, Length) :- NewLength is CurLength + 1, len(Tail, NewLength, Length).
