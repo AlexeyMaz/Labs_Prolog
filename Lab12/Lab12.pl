@@ -36,7 +36,8 @@ ssd(X, Res) :- X1 is X div 10, ssd(X1, Res1), Dig is X mod 10, (is_Simple(Dig), 
 
 task12(X, Kol) :- task12(X, X, Kol).
 task12(_, 2, 0) :- !.
-task12(X, I, Kol) :- I1 is I - 1, task12(X, I1, Kol1), ssd(X, Sum), nod(X, I, Res1), nod(Sum, I, Res2), (0 =\= (X mod I), 1 =\= Res1, 1 =:= Res2, Kol is Kol1 + 1; Kol is Kol1), !.
+task12(X, I, Kol) :- I1 is I - 1, task12(X, I1, Kol1), ssd(X, Sum), nod(X, I, Res1), nod(Sum, I, Res2), 
+                  (0 =\= (X mod I), 1 =\= Res1, 1 =:= Res2, Kol is Kol1 + 1; Kol is Kol1), !.
 
 % 13 Найдите сумму всех чисел, которые равны сумме факториалов их цифр. 
 % Примечание: так как 1! = 1 и 2! = 2 не являются суммами, они не включены.
@@ -48,7 +49,8 @@ is_WowNumber(X) :- digitSum(X, FactSum), X = FactSum.
 
 task13(Result) :- task13(10000, 0, Result).
 task13(2, Result, Result) :- !.
-task13(CurN, CurSum, Result) :- NewN is CurN - 1, (is_WowNumber(CurN), NewSum is CurSum + CurN; NewSum is CurSum), task13(NewN, NewSum, Result), !. 
+task13(CurN, CurSum, Result) :- NewN is CurN - 1, (is_WowNumber(CurN), NewSum is CurSum + CurN; NewSum is CurSum), 
+                             task13(NewN, NewSum, Result), !. 
 
 % 14 Построить предикат, получающий длину списка
 getLengthList([Head | Tail], Length) :- len([ Head | Tail ], 0, Length).
@@ -67,3 +69,16 @@ is_GlobalMin([Head | Tail], Index, Min) :- Index =\= 0, NewIndex is Index - 1, !
 task15 :- 
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), write('Input expected index: '), read(ExpIndex), 
     getMinList(List, Min), write('Is global min? '), (is_GlobalMin(List, ExpIndex, Min), write('YES!'); write('NO!')), !.
+
+% 16_6 Осуществить циклический сдвиг элементов массива влево на три позиции.
+
+%concatList(+A, +B, -C) :- присоединение списка B к списку A
+concatList([], B, B) :- !.
+concatList([Head | Tail], X, [Head | T]) :- concatList(Tail, X, T).
+
+shift_left(Res, 0, Res) :- !.
+shift_left([Head | Tail], N, Res) :- N1 is N - 1, concatList(Tail, [Head], Res1), shift_left(Res1, N1, Res), !.
+
+task16 :- 
+     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+     shift_left(List, 3, ShList), write('Shifted list: '), nl, writeList(ShList), !.
