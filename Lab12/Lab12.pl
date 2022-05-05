@@ -1,9 +1,9 @@
 % readList(+N, -List)
 readList(0, []) :- !.
-readList(N, [ Head | Tail ]) :- read(Head), !, New_N is N - 1, readList(New_N, Tail).
+readList(N, [Head | Tail]) :- read(Head), !, New_N is N - 1, readList(New_N, Tail).
 
 writeList([]) :- !.
-writeList([ Head | Tail ]) :- write(Head), nl, writeList(Tail).
+writeList([Head | Tail]) :- write(Head), nl, writeList(Tail).
 
 nod(A, 0, A) :- !.
 nod(A, B, X) :- C is A mod B, nod(B, C, X).
@@ -39,18 +39,31 @@ task12(_, 2, 0) :- !.
 task12(X, I, Kol) :- I1 is I - 1, task12(X, I1, Kol1), ssd(X, Sum), nod(X, I, Res1), nod(Sum, I, Res2), (0 =\= (X mod I), 1 =\= Res1, 1 =:= Res2, Kol is Kol1 + 1; Kol is Kol1), !.
 
 % 13 Найдите сумму всех чисел, которые равны сумме факториалов их цифр. 
-%Примечание: так как 1! = 1 и 2! = 2 не являются суммами, они не включены.
+% Примечание: так как 1! = 1 и 2! = 2 не являются суммами, они не включены.
 digitSum(X, Sum) :- digitSum(X, Sum, 0).
 digitSum(0, Sum, Sum) :- !.
 digitSum(X, Sum, CurSum) :- Dig is X mod 10, fact(Dig, Dig1), NewSum is CurSum + Dig1, X1 is X div 10, digitSum(X1, NewSum, Sum).
 
-isWowNumber(X) :- digitSum(X, FactSum), X = FactSum.
+is_WowNumber(X) :- digitSum(X, FactSum), X = FactSum.
 
 task13(Result) :- task13(10000, 0, Result).
 task13(2, Result, Result) :- !.
-task13(CurN, CurSum, Result) :- NewN is CurN - 1, (is_cool_number(CurN), NewSum is CurSum + CurN; NewSum is CurSum), task13(NewN, NewSum, Result), !. 
+task13(CurN, CurSum, Result) :- NewN is CurN - 1, (is_WowNumber(CurN), NewSum is CurSum + CurN; NewSum is CurSum), task13(NewN, NewSum, Result), !. 
 
 % 14 Построить предикат, получающий длину списка
-getLengthList([ Head | Tail ], Length) :- len([ Head | Tail ], 0, Length).
+getLengthList([Head | Tail], Length) :- len([ Head | Tail ], 0, Length).
 len([], Length, Length).
 len([ _ | Tail ], CurLength, Length) :- NewLength is CurLength + 1, len(Tail, NewLength, Length).
+
+% 15_5 Дан целочисленный массив и индекс. Необходимо определить является ли элемент по указанному индексу глобальным минимумом.
+getMinList([Head | Tail], Min) :- getMinList([Head | Tail], Head, Min).
+getMinList([], Min, Min) :- !.
+getMinList([Head | Tail], CurMin, Min) :- (Head < CurMin, NewMin is Head; NewMin is CurMin), getMinList(Tail, NewMin, Min), !.
+
+% Является ли элемент по указанному индексу глобальным минимумом
+is_GlobalMin([], _, _) :- write('ERROR: Index > list`s length'), !, fail.
+is_GlobalMin([Head | Tail], Index, Min) :- Index =\= 0, NewIndex is Index - 1, !, is_GlobalMin(Tail, NewIndex, Min); Head =:= Min.
+
+task15 :- 
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), write('Input expected index: '), read(ExpIndex), 
+    getMinList(List, Min), write('Is global min? '), (is_GlobalMin(List, ExpIndex, Min), write('YES!'); write('NO!')), !.
