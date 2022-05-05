@@ -82,3 +82,15 @@ shift_left([Head | Tail], N, Res) :- N1 is N - 1, concatList(Tail, [Head], Res1)
 task16 :- 
      write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
      shift_left(List, 3, ShList), write('Shifted list: '), nl, writeList(ShList), !.
+
+% 17_18 Найти элементы, расположенные перед первым минимальным.
+
+% Возвращает список до заданного числа X.
+getList_beforeX([Head | Tail], X, Res) :- gl_bX([Head | Tail], X, [], Res).
+gl_bX([], _, Res, Res) :- !.
+gl_bX([Head | _], Head, Res, Res) :- !.
+gl_bX([Head | Tail], X, CurRes, Res) :- concatList(CurRes, [Head], NewRes), gl_bX(Tail, X, NewRes, Res), !.
+
+task17 :- 
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+    write('List before min: '), nl, getMinList(List, Min), getList_beforeX(List, Min, ResList), writeList(ResList), !.
