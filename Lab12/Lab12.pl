@@ -113,3 +113,8 @@ bML(List, Min, I, AccumList, Res) :- I1 is I - 1, (inList(List, I), concatList([
 task18 :- 
         write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
         write('Missing list: '), nl, buildMissingList(List, ResList), writeList(ResList), !.
+
+% 19_27 Осуществить циклический сдвиг элементов массива влево на одну позицию.
+task19 :-
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+    shift_left(List, 1, ShList), write('Shifted list: '), nl, writeList(ShList), !.
