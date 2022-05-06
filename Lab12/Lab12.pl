@@ -94,3 +94,22 @@ gl_bX([Head | Tail], X, CurRes, Res) :- concatList(CurRes, [Head], NewRes), gl_b
 task17 :- 
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
     write('List before min: '), nl, getMinList(List, Min), getList_beforeX(List, Min, ResList), writeList(ResList), !.
+
+% 18_20 Найти все пропущенные числа.
+getMaxList([Head | Tail], Max) :- getMaxList([Head | Tail], Head, Max).
+getMaxList([], Max, Max) :- !.
+getMaxList([Head | Tail], CurMax, Max) :- (Head > CurMax, NewMax is Head; NewMax is CurMax), getMaxList(Tail, NewMax, Max), !.
+
+% Есть ли элемент в списке.
+inList([El|_],El) :- !.
+inList([], _) :- !, fail.
+inList([_|T],El) :- inList(T,El), !.
+
+buildMissingList(List, Res) :- getMinList(List, Min), getMaxList(List, Max), bML(List, Min, Max, [], Res).
+bML(_, Min, Min, Res, Res) :- !.
+bML(List, Min, I, AccumList, Res) :- I1 is I - 1, (inList(List, I), concatList([], AccumList, NewList);
+                                     concatList([I], AccumList, NewList)), bML(List, Min, I1, NewList, Res), !.
+
+task18 :- 
+        write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+        write('Missing list: '), nl, buildMissingList(List, ResList), writeList(ResList), !.
