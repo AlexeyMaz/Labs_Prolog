@@ -118,3 +118,12 @@ task18 :-
 task19 :-
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
     shift_left(List, 1, ShList), write('Shifted list: '), nl, writeList(ShList), !.
+
+%20_30 Определить является ли элемент по указанному индексу локальным максимумом.
+is_LocalMax([Head | Tail], Index) :- is_LocalMax([Head | Tail], 1, Index).
+is_LocalMax([Prev, Current, Next | _], Index, Index) :- Current > Prev, Current > Next.
+is_LocalMax([_ | Tail], I, Index) :- I1 is I + 1, is_LocalMax(Tail, I1, Index), !.
+
+task20 :-
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+    write('Input index: '), read(Index), write('Is local max: '), (is_LocalMax(List, Index), write('YES!'); write('NO!')), !.
