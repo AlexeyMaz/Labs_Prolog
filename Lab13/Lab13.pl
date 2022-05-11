@@ -9,10 +9,12 @@ concatList([], B, B) :- !.
 concatList([Head | Tail], X, [Head | T]) :- concatList(Tail, X, T).
 
 % 11_42 Найти все элементы, которые меньше среднего арифметического элементов массива.
+
 sr_ar(List, Res) :- sr_ar(List, 0, 0, Res).
 sr_ar([], Kol, Sum, Res) :- Res is Sum div Kol.
 sr_ar([Head | Tail], CurKol, CurSum, Res) :- NewKol is CurKol + 1, NewSum is CurSum + Head, sr_ar(Tail, NewKol, NewSum, Res), !.
 
+% возвращает список элементов, меньших X
 less_thanX(List, X, Res) :- less_thanX(List, X, [], Res).
 less_thanX([], _, Res, Res) :- !.
 less_thanX([Head | Tail], X, CurList, Res) :- (Head < X, concatList(CurList, [Head], NewList); NewList = CurList), less_thanX(Tail, X, NewList, Res), !.
@@ -20,3 +22,27 @@ less_thanX([Head | Tail], X, CurList, Res) :- (Head < X, concatList(CurList, [He
 task11 :- 
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
     write('sr_ar = '), sr_ar(List, Res), write(Res), nl, write('Elements < sr_ar: '), nl, less_thanX(List, Res, ResList), writeList(ResList).
+
+% 12_48 Построить список с номерами элемента, который повторяется наибольшее число раз.
+
+% сколько раз элемент встречается в списке
+elemFreq(List, X, Res) :- elemFreq(List, X, 0, Res).
+elemFreq([], _, Res, Res) :- !. 
+elemFreq([Head | Tail], Head, CurKol, Res) :- NewKol is CurKol + 1, elemFreq(Tail, Head, NewKol, Res), !. 
+elemFreq([ _ | Tail], X, CurKol, Res) :- elemFreq(Tail, X, CurKol, Res), !. 
+
+% самый частый элемент списка
+most_freqElem([Head | Tail], Res) :- mfe([Head | Tail], Head, 1, Res).
+mfe([], Res, _, Res) :- !.
+mfe([Head | Tail], CurMaxEl, CurMaxFreq, Res) :- elemFreq([Head | Tail], Head, Freq), (Freq > CurMaxFreq, NewMaxEl is Head, NewMaxFreq is Freq; 
+                                                      NewMaxEl is CurMaxEl, NewMaxFreq is CurMaxFreq), mfe(Tail, NewMaxEl, NewMaxFreq, Res), !.
+
+% список с индексами элемента X в списке
+find_X_indexes(List, X, Res) :- f_Xi(List, X, 0, [], Res).
+f_Xi([], _, _, Res, Res) :- !. 
+f_Xi([Head | Tail], X, I, CurList, Res) :- (Head is X, concatList(CurList, [I], NewList); NewList = CurList), 
+                                               I1 is I + 1, f_Xi(Tail, X, I1, NewList, Res), !. 
+
+task12 :- 
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+    most_freqElem(List, MF), find_X_indexes(List, MF, ResList), write('Most frequent element = '), write(MF), nl, write('Result list: '), nl, writeList(ResList).
