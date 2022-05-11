@@ -25,7 +25,7 @@ task11 :-
 
 % 12_48 Построить список с номерами элемента, который повторяется наибольшее число раз.
 
-% сколько раз элемент встречается в списке
+% сколько раз элемент X встречается в списке
 elemFreq(List, X, Res) :- elemFreq(List, X, 0, Res).
 elemFreq([], _, Res, Res) :- !. 
 elemFreq([Head | Tail], Head, CurKol, Res) :- NewKol is CurKol + 1, elemFreq(Tail, Head, NewKol, Res), !. 
@@ -46,3 +46,16 @@ f_Xi([Head | Tail], X, I, CurList, Res) :- (Head is X, concatList(CurList, [I], 
 task12 :- 
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
     most_freqElem(List, MF), find_X_indexes(List, MF, ResList), write('Most frequent element = '), write(MF), nl, write('Result list: '), nl, writeList(ResList).
+
+% 13_54 Построить список из элементов, встречающихся в исходном более трех раз.
+
+% список элементов, встречающихся более Freq раз
+filterByFreq(List, Freq, Res) :- fbf(List, Freq, [], Res).
+fbf(List, Freq, [], _) :- most_freqElem(List, MF), elemFreq(List, MF, GreatFreq), GreatFreq =< Freq, !, fail.
+fbf([], _, Res, Res) :- !.
+fbf([Head | Tail], Freq, CurList, Res) :- elemFreq([Head | Tail], Head, CurElemFreq), (CurElemFreq > Freq, concatList(CurList, [Head], NewList);
+                                          NewList = CurList), fbf(Tail, Freq, NewList, Res), !. 
+
+task13:- 
+    write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
+    filterByFreq(List, 3, ResList), write('Result list: '), nl, writeList(ResList).
