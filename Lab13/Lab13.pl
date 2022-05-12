@@ -8,6 +8,9 @@ writeList([Head | Tail]) :- write(Head), nl, writeList(Tail).
 concatList([], B, B) :- !.
 concatList([Head | Tail], X, [Head | T]) :- concatList(Tail, X, T).
 
+in_list([El|_],El).
+in_list([_|T],El):-in_list(T,El).
+
 % 11_42 Найти все элементы, которые меньше среднего арифметического элементов массива.
 
 sr_ar(List, Res) :- sr_ar(List, 0, 0, Res).
@@ -59,3 +62,18 @@ fbf([Head | Tail], Freq, CurList, Res) :- elemFreq([Head | Tail], Head, CurElemF
 task13:- 
     write('Input list length: '), read(N), write('Input list: '), nl, readList(N, List), 
     filterByFreq(List, 3, ResList), write('Result list: '), nl, writeList(ResList).
+
+% 14 [фамилия, цвет волос]
+task14 :- 
+    Hair = [_, _, _],
+    in_list(Hair,[belokurov,_]),
+    in_list(Hair,[chernov,_]),
+    in_list(Hair,[rizhov,_]),
+    in_list(Hair,[_,redhead]),
+    in_list(Hair,[_,blond]),
+    in_list(Hair,[_,brunette]),
+    not(in_list(Hair,[belokurov,blond])),
+    not(in_list(Hair,[belokurov,brunette])),
+    not(in_list(Hair,[chernov,brunette])),
+    not(in_list(Hair,[rizhov,redhead])),
+    write(Hair), !.
