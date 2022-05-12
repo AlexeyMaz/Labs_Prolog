@@ -111,3 +111,43 @@ task16 :-
     in_list(Factory, [Friend2, tokar, _, _]),
     in_list(Factory, [Friend3, svarshik, _, _]),
     write('slesar is '), write(Friend1), nl, write('tokar is '), write(Friend2), nl, write('svarshick is '), write(Friend3), !.
+
+% 17 
+
+% B справа от A в списке
+right_next(_, _, [_]) :- fail.
+right_next(A, B, [A | [B | _]]).
+right_next(A, B, [ _ | List]) :- right_next(A, B, List).
+
+% B слева от A в списке
+left_next(_, _, [_]) :- fail.
+left_next(A, B, [B | [A | _]]).
+left_next(A, B, [ _ | List]) :- left_next(A, B, List).
+
+% B около A в списке
+next_to(A, B, List) :- right_next(A, B, List).
+next_to(A, B, List) :- left_next(A, B, List).
+
+% X между A и B в списке
+between(X, A, B, List) :- left_next(X, A, List), right_next(X, B, List).
+between(X, A, B, List) :- left_next(X, B, List), right_next(X, A, List).
+
+% [емкость, жидкость]
+task17 :- 
+    Drinks = [_, _, _, _],
+    in_list(Drinks, [bottle, _]),
+    in_list(Drinks, [glass, _]),
+    in_list(Drinks, [jug, _]),
+    in_list(Drinks, [can, _]),
+    in_list(Drinks, [_, milk]),
+    in_list(Drinks, [_, limonade]),
+    in_list(Drinks, [_, kvas]),
+    in_list(Drinks, [_, water]),
+    not(in_list(Drinks, [bottle, water])),
+    not(in_list(Drinks, [bottle, milk])),
+    between([_, limonade], [jug, _], [_, kvas], Drinks),
+    not(in_list(Drinks, [can, limonade])),
+    not(in_list(Drinks, [can, water])),
+    next_to([glass, _], [can, _], Drinks),
+    next_to([glass, _], [_, milk], Drinks),
+    write(Drinks), !.
