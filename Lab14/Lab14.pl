@@ -4,6 +4,10 @@ r_str(-1,A,A,N,N,1):-!.
 r_str(10,A,A,N,N,0):-!.
 r_str(X,A,B,N,K,Flag):-K1 is K+1,append(B,[X],B1),get0(X1),r_str(X1,A,B1,N,K1,Flag).
 
+read_list_str(List) :- read_str(A,_,Flag), read_list_str([A],List,Flag).
+read_list_str(List,List,1) :- !.
+read_list_str(Cur_list,List,0) :- read_str(A,_,Flag), append(Cur_list,[A],C_l), read_list_str(C_l,List,Flag).
+
 write_str([]):-!.
 write_str([H|Tail]):-put(H),write_str(Tail).
 
@@ -14,6 +18,10 @@ count(List, X, Result) :- count(List, X, 0, Result).
 count([], _, Result, Result) :- !.
 count([X|T], X, CurCnt, Result) :- NewCnt is CurCnt + 1, count(T, X, NewCnt, Result), !.
 count([_|T], X, CurCnt, Result) :- count(T, X, CurCnt, Result), !.
+
+len([], Result, Result) :- !.
+len([_|T], CurrentLen, Result) :- NewLen is CurrentLen + 1, len(T, NewLen, Result), !.
+len([X|T], Result) :- len([X|T], 0, Result).
 
 % Задание 1
 % 1.1 Дана строка. Вывести ее три раза через запятую и показать количество символов в ней.
@@ -61,3 +69,13 @@ find_indexes([X|T], X, I, CurList, Result) :- concatStr(CurList, [I], NewList), 
 find_indexes([_|T], X, I, CurList, Result) :- I1 is I + 1, find_indexes(T, X, I1, CurList, Result), !.
 
 task1_5 :- write('Input string: '), read_str(Str, Len), L1 is Len - 1, slice(Str, L1, Len, [LastSym|_]), find_indexes(Str, LastSym, Result), write(Result).
+
+
+% Задание 2
+% 2.1 Дан файл. Прочитать из файла строки и вывести длину наибольшей строки.
+max_len_in_list([], Result, Result) :- !.
+max_len_in_list([H|T], CurMax, Result) :- len(H, NewMax), NewMax > CurMax, max_len_in_list(T, NewMax, Result), !.
+max_len_in_list([_|T], CurMax, Result) :- max_len_in_list(T, CurMax, Result), !.
+max_len_in_list(List, Result) :- max_len_in_list(List, 0, Result).
+
+task2_1 :- see('Labs_Prolog/Lab14/file1.txt'), read_list_str(StrList), seen, max_len_in_list(StrList, MaxLen), write('Max str len: '), write(MaxLen), nl.
