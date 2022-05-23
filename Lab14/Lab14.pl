@@ -160,3 +160,11 @@ shuffle_words([H|T], CurList, Result) :-
     concatStr([L], NewPart, Temp), ((WordLen =\= 1, concatStr(Temp, [R], NewWord)); (NewWord = Temp)), concatStr(CurList, [NewWord], NewList), shuffle_words(T, NewList, Result), !.
 
 task3_6 :- read_str(Str, _), split_str(Str, ' ', StrWords), shuffle_words(StrWords, NewWords), write_str_list(NewWords, ' ').    
+
+% 3.12 Дана строка в которой содержатся цифры и буквы. Необходимо расположить все цифры в начале строки, а буквы - в конце.
+arrange_string([], Numbers, Other, Result) :- concatStr(Numbers, Other, Result), !.  
+arrange_string([S|T], Numbers, Other, Result) :- S >= 48, S =< 57, concatStr(Numbers, [S], NewNums), arrange_string(T, NewNums, Other, Result), !.  
+arrange_string([S|T], Numbers, Other, Result) :- concatStr(Other, [S], NewOther), arrange_string(T, Numbers, NewOther, Result), !.  
+arrange_string(Str, Result) :- arrange_string(Str, [], [], Result).
+
+task3_12 :- read_str(Str, _), arrange_string(Str, Result), write_str(Result).
