@@ -24,6 +24,10 @@ len([], Result, Result) :- !.
 len([_|T], CurrentLen, Result) :- NewLen is CurrentLen + 1, len(T, NewLen, Result), !.
 len([X|T], Result) :- len([X|T], 0, Result).
 
+in_list([], _) :- fail.
+in_list([X|_], X).
+in_list([_|T] ,X) :- in_list(T, X).
+
 % Задание 1
 % 1.1 Дана строка. Вывести ее три раза через запятую и показать количество символов в ней.
 task1_1 :- write('Input string: '), read_str(Str, Len), write_str(Str), write(', '), write_str(Str), write(', '), write_str(Str), nl, write('Length: '), write(Len).
@@ -110,3 +114,22 @@ str_list_to_words_list(StrList, Result) :- str_list_to_words_list(StrList, [], R
 most_freq_word_in_list(Words, Result) :- most_freq_word(Words, Words, 0, [], Result).
 
 task2_4 :- see('Labs_Prolog/Lab14/file2.txt'), read_list_str(StrList), seen, str_list_to_words_list(StrList, WordsList), most_freq_word_in_list(WordsList, MF), write_str(MF).
+
+% 2.5 Дан файл, вывести в отдельный файл строки, состоящие из слов, не повторяющихся в исходном файле.
+get_repeating_words([], _, Result, Result) :- !.
+get_repeating_words([H|T], PrevWords, CurList, Result) :- in_list(PrevWords, H), concatStr(CurList, [H], NewList), concatStr(PrevWords, [H], NewWords), get_repeating_words(T, NewWords, NewList, Result), !.
+get_repeating_words([H|T], PrevWords, CurList, Result) :- concatStr(PrevWords, [H], NewWords), get_repeating_words(T, NewWords, CurList, Result), !.
+get_repeating_words(Words, Result) :- get_repeating_words(Words, [], [], Result).
+
+% Содержится ли в List хотя бы один элемент второго списка
+contains(_, []) :- fail.
+contains(List, [X|_]) :- in_list(List, X), !.
+contains(List, [_|XT]) :- contains(List, XT).
+
+write_no_rep_words([], _) :- !.
+write_no_rep_words([H|T], RepWords) :- split_str(H, ' ', StrWords), not(contains(RepWords, StrWords)), write_str(H), nl, write_no_rep_words(T, RepWords), !.
+write_no_rep_words([_|T], RepWords) :- write_no_rep_words(T, RepWords), !.
+
+task2_5 :- 
+    see('Labs_Prolog/Lab14/file3.txt'), read_list_str(StrList), seen, str_list_to_words_list(StrList, Words), get_repeating_words(Words, RepWords), 
+    tell('Labs_Prolog/Lab14/out_2_5.txt'), write_no_rep_words(StrList, RepWords), told.
