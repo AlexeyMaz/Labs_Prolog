@@ -12,7 +12,7 @@ read_list_str(Cur_list,List,0) :- read_str(A,_,Flag), (not(A = []), append(Cur_l
 write_str([]):-!.
 write_str([H|Tail]):-put(H),write_str(Tail).
 
-write_str_list(List) :- write_str_list(List, "\n").
+write_str_list(List) :- write_str_list(List, '\n').
 write_str_list([], _) :- !.
 write_str_list([H|T], Divider) :- write_str(H), write(Divider), write_str_list(T, Divider), !.
 
@@ -32,9 +32,15 @@ in_list([], _) :- fail.
 in_list([X|_], X).
 in_list([_|T] ,X) :- in_list(T, X).
 
+in_list_exclude([El|T],El,T).
+in_list_exclude([H|T],El,[H|Tail]):-in_list_exclude(T,El,Tail).
+
 get_by_idx(L,I,El):-get_by_idx(L,I,El,0).
 get_by_idx([H|_],K,H,K):-!.
 get_by_idx([_|Tail],I,El,Cou):- I =:= Cou,get_by_idx(Tail,Cou,El,Cou);Cou1 is Cou + 1, get_by_idx(Tail,I,El,Cou1).
+
+read_list(0, []) :- !.
+read_list(I, [X|T]) :- read(X), I1 is I - 1, read_list(I1, T).
 
 % Задание 1
 % 1.1 Дана строка. Вывести ее три раза через запятую и показать количество символов в ней.
@@ -107,11 +113,11 @@ cnt_sym_in_list([H|T], Sym, CurCnt, Result) :- count_symbols(H, Sym, Cnt), NewCn
 cnt_sym_in_list(List, Sym, Result) :- cnt_sym_in_list(List, Sym, 0, Result), !.
 
 write_many_a([], _) :- !.
-write_many_a([H|T], Avg) :- count_symbols(H, 'a', Cnt1), count_symbols(H, "A", Cnt2), Cnt is Cnt1 + Cnt2, Cnt > Avg, write_str(H), nl, write_many_a(T, Avg), !.
+write_many_a([H|T], Avg) :- count_symbols(H, 'a', Cnt1), count_symbols(H, 'A', Cnt2), Cnt is Cnt1 + Cnt2, Cnt > Avg, write_str(H), nl, write_many_a(T, Avg), !.
 write_many_a([_|T], Avg) :- write_many_a(T, Avg), !.
 
 task2_3 :- 
-    see('Labs_Prolog/Lab14/file1.txt'), read_list_str(StrList), seen, len(StrList, Len), cnt_sym_in_list(StrList, 'a', Cnt1), cnt_sym_in_list(StrList, "A", Cnt2), 
+    see('Labs_Prolog/Lab14/file1.txt'), read_list_str(StrList), seen, len(StrList, Len), cnt_sym_in_list(StrList, 'a', Cnt1), cnt_sym_in_list(StrList, 'A', Cnt2), 
     CntA is Cnt1 + Cnt2, Avg is CntA / Len, write('Avg A per str: '), write(Avg), nl, write_many_a(StrList, Avg).
 
 % 2.4 Дан файл, вывести самое частое слово.
@@ -168,3 +174,46 @@ arrange_string([S|T], Numbers, Other, Result) :- concatStr(Other, [S], NewOther)
 arrange_string(Str, Result) :- arrange_string(Str, [], [], Result).
 
 task3_12 :- read_str(Str, _), arrange_string(Str, Result), write_str(Result).
+
+%%% Задача 6
+% Размещения по K с повторениями
+k_perms_rep(_, 0, Result1) :- write('\t'), write(Result1), nl, !, fail. 
+k_perms_rep(List, K, Result) :- in_list(List, X), K1 is K - 1, k_perms_rep(List, K1, [X|Result]). 
+
+% Перестановки
+perms([], Result) :- write('\t'), write(Result), nl, !, fail.
+perms(List, Result) :- in_list_exclude(List, X, Tail), perms(Tail, [X|Result]).
+
+% Размещения по K без повторений
+k_perms(_, 0, Result1) :- write('\t'), write(Result1), nl, !, fail. 
+k_perms(List, K, Result) :- in_list_exclude(List, X, Tail), K1 is K - 1, k_perms(Tail, K1, [X|Result]). 
+
+% Все подмножества
+powerset([], []).
+powerset([H|Sub_set], [H|SetTail]) :- powerset(Sub_set, SetTail).
+powerset(Sub_set, [_|SetTail]) :- powerset(Sub_set, SetTail).
+powerset(Set) :- powerset(A, Set), write('\t'), write(A), nl, fail.
+
+% Все сочетания по k без повторений
+combs([], _, 0) :- !.
+combs([H|Sub_set], [H|SetTail], K) :- K1 is K-1, combs(Sub_set, SetTail, K1).
+combs(Sub_set, [_|SetTail], K) :- combs(Sub_set, SetTail, K).
+combs(Set, K) :- combs(A, Set, K), write('\t'), write(A), nl, fail.
+
+% Все сочетания по k с повторениями
+combs_rep([], _, 0) :- !.
+combs_rep([H|Sub_set], [H|SetTail], K):- K1 is K-1, combs_rep(Sub_set, [H|SetTail], K1).
+combs_rep(Sub_set, [_|SetTail], K) :- combs_rep(Sub_set, SetTail, K).
+combs_rep(Set, K) :- combs_rep(A, Set, K), write('\t'), write(A), nl, fail.
+
+task6 :- 
+    write('Elements count: '), read(N), read_list(N, List), write('K: '), read(K), 
+    tell('Labs_Prolog/Lab14/out_6.txt'),
+    write('Set: '), write(List), write('; K = '), write(K), nl, nl,
+    write(K), write('-permutations (with rep.): '), nl, not(k_perms_rep(List, K, [])), nl,
+    write('All permutations: '), nl, not(perms(List, [])), nl,
+    write(K), write('-permutations (no rep.): '), nl, not(k_perms(List, K, [])), nl,
+    write('All subsets: '), nl, not(powerset(List)), nl,
+    write(K), write('-combinations (no rep.): '), nl, not(combs(List, K)), nl,
+    write(K), write('-combinations (with rep.): '), nl, not(combs_rep(List, K)), nl,
+    told, write('See out_6.txt for results').
