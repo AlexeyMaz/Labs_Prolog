@@ -177,16 +177,22 @@ task3_12 :- read_str(Str, _), arrange_string(Str, Result), write_str(Result).
 
 %%% Задача 6
 % Размещения по K с повторениями
-k_perms_rep(_, 0, Result1) :- write('\t'), write(Result1), nl, !, fail. 
-k_perms_rep(List, K, Result) :- in_list(List, X), K1 is K - 1, k_perms_rep(List, K1, [X|Result]). 
+k_perms_rep(_, 0, Result, Result) :- !. 
+k_perms_rep(List, K, CurList, Result) :- in_list(List, X), K1 is K - 1, k_perms_rep(List, K1, [X|CurList], Result). 
+k_perms_rep(List, K, Result) :- k_perms_rep(List, K, [], Result).
+k_perms_rep(List, K) :- k_perms_rep(List, K, Perm), write("\t"), write(Perm), nl, fail.
 
 % Перестановки
-perms([], Result) :- write('\t'), write(Result), nl, !, fail.
-perms(List, Result) :- in_list_exclude(List, X, Tail), perms(Tail, [X|Result]).
+perms([], Result, Result) :- !.
+perms(List, CurPerm, Result) :- in_list_exclude(List, X, Tail), perms(Tail, [X|CurPerm], Result).
+perms(List, Result) :- perms(List, [], Result).
+perms(List) :- perms(List, P), write("\t"), write(P), nl, fail.
 
 % Размещения по K без повторений
-k_perms(_, 0, Result1) :- write('\t'), write(Result1), nl, !, fail. 
-k_perms(List, K, Result) :- in_list_exclude(List, X, Tail), K1 is K - 1, k_perms(Tail, K1, [X|Result]). 
+k_perms(_, 0, Result, Result) :- !.
+k_perms(List, K, CurPerm, Result) :- in_list_exclude(List, X, Tail), K1 is K - 1, k_perms(Tail, K1, [X|CurPerm], Result).
+k_perms(List, K, Result) :- k_perms(List, K, [], Result).
+k_perms(List, K) :- k_perms(List, K, Perm), write("\t"), write(Perm), nl, fail.
 
 % Все подмножества
 powerset([], []).
@@ -210,9 +216,9 @@ task6 :-
     write('Elements count: '), read(N), read_list(N, List), write('K: '), read(K), 
     tell('Labs_Prolog/Lab14/out_6.txt'),
     write('Set: '), write(List), write('; K = '), write(K), nl, nl,
-    write(K), write('-permutations (with rep.): '), nl, not(k_perms_rep(List, K, [])), nl,
-    write('All permutations: '), nl, not(perms(List, [])), nl,
-    write(K), write('-permutations (no rep.): '), nl, not(k_perms(List, K, [])), nl,
+    write(K), write("-permutations (with rep.): "), nl, not(k_perms_rep(List, K)), nl,
+    write("All permutations: "), nl, not(perms(List)), nl,
+    write(K), write("-permutations (no rep.): "), nl, not(k_perms(List, K)), nl,
     write('All subsets: '), nl, not(powerset(List)), nl,
     write(K), write('-combinations (no rep.): '), nl, not(combs(List, K)), nl,
     write(K), write('-combinations (with rep.): '), nl, not(combs_rep(List, K)), nl,
@@ -228,3 +234,14 @@ task7_writer :-
     write(Word), nl, fail.
 
 task7 :- tell('Labs_Prolog/Lab14/out_7.txt'), task7_writer; told.
+
+%%% Задача 8 Построить все слова длины 5, в которых ровно 2 буквы a, остальные буквы не повторяются. Вывод в файл.
+task8_writer :-
+    Word = [_, _, _, _, _], combs([A_Pos1, A_Pos2], [0,1,2,3,4], 2),
+    get_by_idx(Word, A_Pos1, a), get_by_idx(Word, A_Pos2, a),
+    in_list_exclude([0,1,2,3,4], A_Pos1, Temp1), in_list_exclude(Temp1, A_Pos2, [Other_Pos1, Other_Pos2, Other_Pos3]),
+    k_perms([b,c,d,e,f], 3, [Let1, Let2, Let3]), 
+    get_by_idx(Word, Other_Pos1, Let1), get_by_idx(Word, Other_Pos2, Let2), get_by_idx(Word, Other_Pos3, Let3), 
+    write(Word), nl, fail.
+
+task8 :- tell('Labs_Prolog/Lab14/out_8.txt'), task8_writer; told.
